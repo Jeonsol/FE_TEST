@@ -14,15 +14,5 @@ export default {
     const evt = new CustomEvent(event, { detail: data })
     this.el.dispatchEvent(evt)
     return this
-  },
-
-  hide() {
-    this.el.style.display = 'none'
-    return this
-  },
-
-  show() {
-    this.el.style.display = ''
-    return this
   }
 }

@@ -48,7 +48,8 @@ export default {
       },
       {
         "index":7,
-        "thumbURL":"https://imgauto-phinf.pstatic.net/20170913_282/auto_15052824334931An1N_JPEG/20170913150028_2fv2mRE6.jpg?type=f120_80",
+        "thumbURL":"https://imgauto-phinf.pstatic.net/2017" +
+        "_282/auto_15052824334931An1N_JPEG/20170913150028_2fv2mRE6.jpg?type=f120_80",
         "viewURL":"https://imgauto-phinf.pstatic.net/20170913_282/auto_15052824334931An1N_JPEG/20170913150028_2fv2mRE6.jpg?type=f980_654",
         "originURL":"https://imgauto-phinf.pstatic.net/20170913_282/auto_15052824334931An1N_JPEG/20170913150028_2fv2mRE6.jpg",
         "imgDesc":""
@@ -515,9 +516,33 @@ export default {
         "originURL":"https://imgauto-phinf.pstatic.net/20170915_45/auto_1505448256949tNjE5_JPEG/20170915130412_VvCnHn9Q.jpg",
         "imgDesc":""}]
   },
+
   list() {
     return Promise.resolve(this.data)
   },
+
+  // index 는 10 단위로 들어 옴
+  getImgList(index = 0) {
+    const imgCount = 10
+
+    let imgSet = []
+    let dataLength = this.data.items.length
+
+    for(let i = index - imgCount; i <= (index + imgCount*2); i++) {
+      if(i >= 0 && i < dataLength) {
+        imgSet.push(this.data.items[i])
+      } else {
+        imgSet.push(0)
+      }
+    }
+
+    if(dataLength === 0) {
+      return []
+    }
+
+    return Promise.resolve(imgSet)
+  },
+
   getImg(index = 0) {
     let imgSet
 
