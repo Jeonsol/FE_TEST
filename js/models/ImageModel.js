@@ -517,5 +517,24 @@ export default {
   },
   list() {
     return Promise.resolve(this.data)
+  },
+  getImg(index = 0) {
+    let imgSet
+
+    if(this.data.items.length > 1) {
+      if (index === 0) {
+        imgSet = [0, this.data.items[index], this.data.items[index+1]]
+      } else if (index === this.data.items.length-1) {
+        imgSet = [this.data.items[index-1], this.data.items[index], 0]
+      } else {
+        imgSet = [this.data.items[index-1], this.data.items[index], this.data.items[index+1]]
+      }
+    } else if (this.data.items.length === 1) {
+      imgSet = [0, this.data.items[index], 0]
+    } else {
+      imgSet = []
+    }
+
+    return Promise.resolve(imgSet)
   }
 }

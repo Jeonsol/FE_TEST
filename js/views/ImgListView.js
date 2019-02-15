@@ -29,6 +29,7 @@ ImgListView.render = function (data = []) {
     ImgListView.setActiveList(0)
     this.bindEvents()
   }
+
   return this
 }
 
@@ -41,10 +42,10 @@ ImgListView.getImgListHtml = function (data) {
 
 // 이미지 데이터 셋팅
 ImgListView.setImgData = function (dataLength) {
-  // todo : 이런 데이터 어떻게 선언하는 게 좋을 까..? ㅠㅠ
+  // todo : imgCount 데이터 어떻게 선언하는 게 좋을 까..?
   this.imgCount = 10
   this.dataLength = dataLength
-  this.totalPage = Math.floor(dataLength / this.imgCount)
+  this.totalPage = Math.floor(this.dataLength / this.imgCount)
   this.currentPage = 0
 
   if (this.dataLength > this.imgCount) {
@@ -61,6 +62,7 @@ ImgListView.bindEvents = function () {
   this.nextBtnEl.addEventListener('click', e => this.clickNextButton(e))
 }
 
+// 이미지 리스트 선택 시 강조
 ImgListView.setActiveList = function (tagIndex) {
   Array.from(this.rollingEl.querySelectorAll('li')).forEach((li, index) => {
     li.querySelector('.select').style.display = tagIndex === index ? 'block' : ''
@@ -79,6 +81,7 @@ ImgListView.clickPrevButton = function () {
     this.setActiveList(this.currentPage*this.imgCount)
     this.addOnTag(this.nextBtnEl)
   }
+
   if(this.currentPage === 0) {
     this.deleteOnTag(this.prevBtnEl)
   }
@@ -94,6 +97,7 @@ ImgListView.clickNextButton = function () {
     this.setActiveList(this.currentPage*this.imgCount)
     this.addOnTag(this.prevBtnEl)
   }
+
   if(this.currentPage === this.totalPage) {
     this.deleteOnTag(this.nextBtnEl)
   }

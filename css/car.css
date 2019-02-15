@@ -58,7 +58,7 @@ table th{border:0}
 .view_bigimg .frame{display:block;position:absolute;top:0;left:0;width:980px;height:652px;border:1px solid #afafaf;border-width:1px 0}
 .view_bigimg .mask{display:block;width:100%;height:100%;background-color:#fff;opacity:0;-ms-filter:alpha(opacity=0);filter:alpha(opacity=0)}
 
-.view_bigimg.v2{height:auto;margin:25px auto}
+.view_bigimg.v2{height:auto;margin:25px auto;background-color: #fff;}
 .view_bigimg.v2 .img_loading div{overflow:hidden;position:relative;height:654px !important}
 .view_bigimg.v2 .img_loading ul{overflow:hidden;position:absolute;top:0;width:10000px;height:100%;zoom:1}
 .view_bigimg.v2 .img_loading li{float:left;width:980px;height:654px}
