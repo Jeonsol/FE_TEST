@@ -18,7 +18,7 @@ export default {
   // 데이터 모델 가져오기
   fetchImgList() {
     ImageModel.list().then(data => {
-      this.dataLength = data.items.length
+      this.dataLength = ImageModel.data.imageCount
 
       ImgListView.render(data.items)
       ImgListView.setImgData(this.dataLength)
