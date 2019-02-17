@@ -7,6 +7,7 @@ ImgListView.setup = function (el) {
 
   this.listIndex = 0
   this.rollingWrapEl = el.querySelector('#rolling')
+  this.rollingEl = el.querySelector('#rolling ul')
   this.prevBtnEl = el.querySelector('#prevBtn_list')
   this.nextBtnEl = el.querySelector('#nextBtn_list')
 
@@ -25,15 +26,16 @@ ImgListView.renderView = function () {
 ImgListView.render = function (data = []) {
   if(data.length) {
     this.getImgListHtml(data)
-    ImgListView.setActiveList()
     this.bindEvents()
+    this.setActiveList(0)
   }
 
   return this
 }
 
 ImgListView.getImgListHtml = function (data) {
-  this.rollingWrapEl.innerHTML = data.reduce((html, item) => {
+  this.rollingEl.innerHTML = ''
+  this.rollingEl.innerHTML = data.reduce((html, item) => {
     if(item !==0) {
       html += `<li class="_idx${item.index} list"><a href="#"><span class="select" style=""></span><img width="92" height="60" alt="${item.imgDesc}" src="${item.viewURL}" style=""></a></li>`
     } else {
@@ -41,17 +43,9 @@ ImgListView.getImgListHtml = function (data) {
     }
 
     return html
-  }, '<ul id="list" style="left:-920px">')
+  }, '')
 
   this.rollingEl = this.el.querySelector('#list')
-  this.bindImgListEvents()
-}
-
-ImgListView.bindImgListEvents = function () {
-  Array.from(this.rollingEl.querySelectorAll('li.list')).forEach(li => {
-    const tagIndex = li.classList[0].split("x")[1]
-    li.addEventListener('click', e => this.setActiveList(tagIndex))
-  })
 }
 
 // 이미지 데이터 셋팅
@@ -69,23 +63,29 @@ ImgListView.setImgData = function (dataLength) {
 
 // 이벤트 바인드
 ImgListView.bindEvents = function () {
+  this.rollingEl.addEventListener('click', e => this.setActiveList(e))
   this.prevBtnEl.addEventListener('click', e => this.clickPrevButton(e))
   this.nextBtnEl.addEventListener('click', e => this.clickNextButton(e))
 }
 
 // 이미지 리스트 선택 시 강조
-ImgListView.setActiveList = function (tagIndex = 1) {
-  Array.from(this.rollingEl.querySelectorAll('li.list')).forEach((li) => {
+ImgListView.setActiveList = function (e) {
+  console.log("hi")
+  Array.from(this.rollingEl.querySelectorAll('.list')).forEach(li => {
     li.querySelector('.select').style.display = ''
   })
 
-  let selectedLi = this.rollingEl.querySelector(`._idx${tagIndex}`)
-  console.log(selectedLi.querySelector('.select'))
-  selectedLi.classList.add('tlqkf')
-  selectedLi.querySelector('.select').style.display = 'block'
-  // console.log(selectedLi)
-  this.emit('@click', { tagIndex })
-  console.log(this.rollingEl)
+  if(typeof e === 'number') {
+    let selectedLi = this.rollingEl.querySelector(`._idx${e + 1}`)
+    selectedLi.querySelector('.select').style.display = 'block'
+  } else {
+    e.target.style.display = 'block'
+  }
+}
+
+ImgListView.wrapper = function (data, listIndex) {
+  this.getImgListHtml(data)
+  this.setActiveList(listIndex)
 }
 
 // 이전 버튼 클릭시, 호출되는 함수

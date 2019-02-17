@@ -36,9 +36,14 @@ export default {
   },
 
   getImgList (listIndex) {
+    // ImageModel.getImgList(listIndex).then(data => {
+    //   ImgListView.getImgListHtml(data, listIndex)
+    // })
+    // ImgListView.setActiveList(listIndex)
     ImageModel.getImgList(listIndex).then(data => {
-      ImgListView.getImgListHtml(data)
+      ImgListView.wrapper(data, listIndex)
     })
+    // ImgListView.setActiveList(listIndex)
   },
 
   // 이미지 3개 가져오기 (전, 후 이미지 포함)
@@ -81,7 +86,6 @@ export default {
     }
 
     this.getImg(tabIndex)
-    ImgListView.setActiveList(tabIndex)
   },
 
   // 이미지의 이후 버튼 클릭했을 경우 호출되는 함수
@@ -91,6 +95,6 @@ export default {
     }
 
     this.getImg(tabIndex)
-    // ImgListView.setActiveList(tabIndex)
+    ImgListView.setActiveList(tabIndex)
   }
 }
