@@ -88,6 +88,16 @@ ImgListView.wrapper = function (data, listIndex) {
   this.setActiveList(listIndex)
 }
 
+ImgListView.prevWrapper = function (data, listIndex) {
+  this.getImgListHtml(data)
+  if(this.listIndex > 0) {
+    const listIndex = (this.listIndex -= 1) * this.imgCount
+
+    this.addOnTag(this.nextBtnEl)
+  }
+  this.setActiveList(listIndex + 9)
+}
+
 // 이전 버튼 클릭시, 호출되는 함수
 ImgListView.clickPrevButton = function () {
   if(this.listIndex > 0) {

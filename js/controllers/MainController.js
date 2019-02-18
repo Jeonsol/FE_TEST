@@ -45,6 +45,16 @@ export default {
     })
     // ImgListView.setActiveList(listIndex)
   },
+  getImgPrevList (listIndex) {
+    // ImageModel.getImgList(listIndex).then(data => {
+    //   ImgListView.getImgListHtml(data, listIndex)
+    // })
+    // ImgListView.setActiveList(listIndex)
+    ImageModel.getImgList(listIndex).then(data => {
+      ImgListView.prevWrapper(data, listIndex)
+    })
+    // ImgListView.setActiveList(listIndex)
+  },
 
   // 이미지 3개 가져오기 (전, 후 이미지 포함)
   getImg (tagIndex) {
@@ -82,10 +92,12 @@ export default {
   // 이미지의 이전 버튼 클릭했을 경우 호출되는 함수
   onClickPrevImgBtn (tabIndex) {
     if (ImgView.index % (ImgListView.imgCount) === 9) {
-      ImgListView.clickPrevButton()
+      this.getImgPrevList(tabIndex)
+      this.getImg(tabIndex-1)
     }
 
     this.getImg(tabIndex)
+    ImgListView.setActiveList(tabIndex)
   },
 
   // 이미지의 이후 버튼 클릭했을 경우 호출되는 함수
