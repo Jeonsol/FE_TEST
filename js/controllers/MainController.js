@@ -24,9 +24,9 @@ class MainController {
   // 데이터 모델 가져오기
   fetchImgList() {
     this.imgModel.list().then(data => {
-      this.dataLength = this.imgModel.data.imageCount
+      this.dataLength = data.length
 
-      this.imgListView.render(data.items)
+      this.imgListView.render(data)
       this.imgListView.setImgData(this.dataLength)
       this.imgView.setImgData(this.dataLength)
     })
