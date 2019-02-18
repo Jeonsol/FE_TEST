@@ -8,6 +8,8 @@ class MainController {
     this.imgModel = null
     this.imgListView = null
     this.imgView = null
+    this.dataLength = ''
+    this.imageLength = ''
   }
 
   init() {
@@ -18,14 +20,14 @@ class MainController {
       .on('@clickPrev', e => this.onClickPrevImgBtn(e.detail.tagIndex))
       .on('@clickNext', e => this.onClickNextImgBtn(e.detail.tagIndex))
 
+    this.dataLength = this.imgModel.dataLength
+    this.imageLength = this.imgModel.imageLength
     this.fetchImgList()
   }
 
   // 데이터 모델 가져오기
   fetchImgList() {
     this.imgModel.list().then(data => {
-      this.dataLength = data.length
-
       this.imgListView.render(data)
       this.imgListView.setImgData(this.dataLength)
       this.imgView.setImgData(this.dataLength)
@@ -63,7 +65,7 @@ class MainController {
 
   // 이미지의 이전 버튼 클릭했을 경우 호출되는 함수
   onClickPrevImgBtn (tabIndex) {
-    if (this.imgView.index % (this.imgListView.imgCount) === 9) {
+    if (this.imgView.index % (this.imageLength) === 9) {
       this.imgListView.clickPrevButton()
     }
 
@@ -73,7 +75,7 @@ class MainController {
 
   // 이미지의 이후 버튼 클릭했을 경우 호출되는 함수
   onClickNextImgBtn (tabIndex) {
-    if (this.imgView.index % (this.imgListView.imgCount) === 0) {
+    if (this.imgView.index % (this.imageLength) === 0) {
       this.imgListView.clickNextButton()
     }
 
