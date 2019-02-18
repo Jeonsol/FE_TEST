@@ -1,12 +1,11 @@
 import json from '../../json/sample.js'
 
 class ImageModel {
-  constructor () {
-    this.dataLength = json.imageCount
-    this.imageLength = 10
+  constructor() {
+    this.dataLength = json.items.length
+    this.imageListLength = 10
   }
-
-  async fetchImages (firstIndex, length = json.imageCount) {
+  async fetchImages (firstIndex, length) {
     let dataSet = []
 
     if (json.imageCount > 0) {
@@ -21,8 +20,8 @@ class ImageModel {
     return dataSet
   }
 
-  async list() {
-    return await (this.fetchImages(0))
+  async getImgList(index = 0) {
+    return await (this.fetchImages(index - this.imageListLength, index + this.imageListLength*2))
   }
 
   async getImg(index = 0) {

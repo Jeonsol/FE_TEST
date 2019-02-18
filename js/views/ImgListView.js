@@ -3,96 +3,115 @@ import View from './View.js'
 class ImgListView extends View {
   constructor (el) {
     super()
-
     this.init(el)
 
-    this.rollingWrapEl = el.querySelector('#rolling')
-    this.rollingEl = el.querySelector('#list')
+    this.rollingEl = el.querySelector('#img_list_rolling')
     this.prevBtnEl = el.querySelector('#prevBtn_list')
     this.nextBtnEl = el.querySelector('#nextBtn_list')
-
-    this.renderView()
+    this.imagesLength = 0
+    this.images = []
+    this.listIndex = 0
+    this.index = 0
 
     return this
   }
 
-  renderView() {
-    this.rollingElWrapWidth = this.rollingWrapEl.offsetWidth;
-    this.leftPosition = 0
-  }
-
-  render(data = []) {
+  setUp(data = []) {
     if(data.length) {
-      this.rollingEl.innerHTML = this.getImgListHtml(data)
-
-      this.setActiveList(0)
+      this.render(data)
       this.bindEvents()
     }
 
     return this
   }
 
-  getImgListHtml(data) {
-    return data.reduce((html, item) => {
-      html += `<li class="_idx${item.index}"><a href="#"><span class="select" style=""></span><img width="92" height="60" alt="${item.imgDesc}" src="${item.viewURL}" style=""></a></li>`
-      return html
-    }, '')
-  }
-
-  setImgData(dataLength) {
-    // todo : imgCount 데이터 어떻게 선언하는 게 좋을 까..?
-    this.imgCount = 10
+  setImgData(dataLength, imagesLength) {
+    this.imagesLength = imagesLength
     this.dataLength = dataLength
-    this.totalPage = Math.floor(this.dataLength / this.imgCount)
-    this.currentPage = 0
 
-    if (this.dataLength > this.imgCount) {
+    if (this.dataLength > this.imagesLength) {
       this.addOnTag(this.nextBtnEl)
     }
   }
 
+  render(data, tagIndex = 0) {
+    this.rollingEl.innerHTML =  data.reduce((html, item) => {
+      if(item !== 0) {
+        html += `<li class="_idx${item.index} list"><a href="#"><span class="select" style=""></span><img width="92" height="60" alt="${item.imgDesc}" src="${item.viewURL}" style=""></a></li>`
+      } else {
+        html += `<li></li>`
+      }
+      return html
+    }, '')
+
+    this.images = this.getCurrentImagesList()
+    this.bindListEvent()
+    this.setActiveList(tagIndex)
+  }
+
   bindEvents() {
-    Array.from(this.rollingEl.querySelectorAll('li')).forEach((li, tagIndex) => {
-      li.addEventListener('click', e => this.setActiveList(tagIndex))
-    })
     this.prevBtnEl.addEventListener('click', e => this.clickPrevButton(e))
     this.nextBtnEl.addEventListener('click', e => this.clickNextButton(e))
   }
 
+  bindListEvent() {
+    this.images.forEach((li, index) => {
+      li.addEventListener('click', e => this.setActiveList(index))
+    })
+  }
+
+  getCurrentImagesList() {
+    const itemList = Array.from(this.rollingEl.querySelectorAll('li'))
+    const ImageSet = []
+    for(let i = this.imagesLength; i < this.imagesLength*2; i++) {
+      if(itemList[i].className) {
+        ImageSet.push(itemList[i])
+      } else {
+        itemList[i].style.background = 'none'
+        ImageSet.push(itemList[i])
+      }
+    }
+    return ImageSet
+  }
+
   setActiveList(tagIndex) {
-    Array.from(this.rollingEl.querySelectorAll('li')).forEach((li, index) => {
-      li.querySelector('.select').style.display = tagIndex === index ? 'block' : ''
+    this.images.forEach((li, index) => {
+      if(li.className) {
+        li.querySelector('.select').style.display = tagIndex === index ? 'block' : ''
+      }
     })
 
-    this.emit('@click', { tagIndex })
+    this.index = this.listIndex + tagIndex
+
+    this.emit('@click', { tagIndex: this.index })
   }
 
   clickPrevButton() {
-    if(this.currentPage >= 1) {
-      this.leftPosition += this.rollingElWrapWidth
-      this.rollingEl.style.left = `${this.leftPosition.toString()}px`
-      this.currentPage --
+    if(this.listIndex > 0) {
+      this.listIndex -= this.imagesLength
+      const listIndex = this.listIndex
 
-      this.setActiveList(this.currentPage*this.imgCount)
       this.addOnTag(this.nextBtnEl)
+      this.emit('@clickListBtn', { listIndex })
     }
 
-    if(this.currentPage === 0) {
+    if(this.listIndex === 0) {
       this.deleteOnTag(this.prevBtnEl)
     }
   }
 
   clickNextButton() {
-    if(this.totalPage > this.currentPage) {
-      this.leftPosition -= this.rollingElWrapWidth
-      this.rollingEl.style.left = `${this.leftPosition.toString()}px`
-      this.currentPage ++
+    const maxListIndex = this.dataLength - (this.dataLength % this.imagesLength)
 
-      this.setActiveList(this.currentPage*this.imgCount)
+    if (this.listIndex < maxListIndex) {
+      this.listIndex += this.imagesLength
+      const listIndex = this.listIndex
+
       this.addOnTag(this.prevBtnEl)
+      this.emit('@clickListBtn', { listIndex })
     }
 
-    if(this.currentPage === this.totalPage) {
+    if(this.listIndex === maxListIndex) {
       this.deleteOnTag(this.nextBtnEl)
     }
   }

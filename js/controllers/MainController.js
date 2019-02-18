@@ -8,46 +8,57 @@ class MainController {
     this.imgModel = null
     this.imgListView = null
     this.imgView = null
-    this.dataLength = ''
-    this.imageLength = ''
+
+    this.dataLength = 0
+    this.imageListLength = 0
   }
 
   init() {
     this.imgModel = new ImageModel()
     this.imgListView = new ImgListView(document.querySelector('.imgview_lst'))
       .on('@click', e => this.onClickImgList(e.detail.tagIndex))
+      .on('@clickListBtn', e => this.onClickListBtn(e.detail.listIndex))
     this.imgView = new ImgView(document.querySelector('.view_bigimg.v2'))
       .on('@clickPrev', e => this.onClickPrevImgBtn(e.detail.tagIndex))
       .on('@clickNext', e => this.onClickNextImgBtn(e.detail.tagIndex))
 
+    this.imageListLength = this.imgModel.imageListLength
     this.dataLength = this.imgModel.dataLength
-    this.imageLength = this.imgModel.imageLength
-    this.fetchImgList()
+
+    this.setUp()
   }
 
-  // 데이터 모델 가져오기
-  fetchImgList() {
-    this.imgModel.list().then(data => {
-      this.imgListView.render(data)
-      this.imgListView.setImgData(this.dataLength)
-      this.imgView.setImgData(this.dataLength)
+  // 처음 화면 render & data Setting
+  setUp() {
+    this.imgListView.setImgData(this.dataLength, this.imageListLength)
+    this.imgView.setImgData(this.dataLength)
+
+    this.imgModel.getImgList().then(data => {
+      this.imgListView.setUp(data)
     })
 
     this.imgModel.getImg().then(data => {
-      this.imgView.render(data)
+      this.imgView.setUp(data)
+    })
+  }
+
+  // 이미지리스트 30개 가져오기 (전, 후 이미지 포함)
+  getImgList (listIndex, tagIndex) {
+    this.imgModel.getImgList(listIndex).then(data => {
+      this.imgListView.render(data, tagIndex)
     })
   }
 
   // 이미지 3개 가져오기 (전, 후 이미지 포함)
-  getImgList (tagIndex) {
+  getImg (tagIndex) {
     this.imgModel.getImg(tagIndex).then(data => {
-      this.imgView.getImgHtml(data)
+      this.imgView.render(data)
     })
   }
 
   // 이미지 리스트 클릭했을 경우 호출되는 함수
   onClickImgList (tabIndex) {
-    this.getImgList(tabIndex)
+    this.getImg(tabIndex)
     this.imgView.index = tabIndex
 
     if(tabIndex > 0) {
@@ -63,24 +74,29 @@ class MainController {
     }
   }
 
+  onClickListBtn (listIndex) {
+    this.getImgList (listIndex)
+  }
+
   // 이미지의 이전 버튼 클릭했을 경우 호출되는 함수
   onClickPrevImgBtn (tabIndex) {
-    if (this.imgView.index % (this.imageLength) === 9) {
-      this.imgListView.clickPrevButton()
+    if (this.imgView.index % (this.imageListLength) === this.imageListLength) {
+      this.imgListView.listIndex -= this.imageListLength
+      this.getImgList(this.imgListView.listIndex, tabIndex % this.imageListLength)
     }
 
-    this.getImgList(tabIndex)
-    this.imgListView.setActiveList(tabIndex)
+    this.getImg(tabIndex)
+    this.imgListView.setActiveList(tabIndex % this.imageListLength)
   }
 
   // 이미지의 이후 버튼 클릭했을 경우 호출되는 함수
   onClickNextImgBtn (tabIndex) {
-    if (this.imgView.index % (this.imageLength) === 0) {
-      this.imgListView.clickNextButton()
+    if (this.imgView.index % (this.imageListLength) === 0) {
+      this.imgListView.listIndex += this.imageListLength
+      this.getImgList(this.imgListView.listIndex, tabIndex % this.imageListLength)
     }
-
-    this.getImgList(tabIndex)
-    this.imgListView.setActiveList(tabIndex)
+    this.getImg(tabIndex)
+    this.imgListView.setActiveList(tabIndex % this.imageListLength)
   }
 }
 

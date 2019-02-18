@@ -3,36 +3,38 @@ import View from './View.js'
 class ImgView extends View {
   constructor (el) {
     super()
-
     this.init(el)
 
-    this.index = 0
-    this.imgWrap = el.querySelector('#img_wrap')
+    this.rollingEl = el.querySelector('#img_rolling')
     this.prevBtnEl = el.querySelector('#prevBtn_big')
     this.nextBtnEl = el.querySelector('#nextBtn_big')
+    this.index = 0
+
 
     return this
   }
 
-  render(data = []) {
+  setUp(data = []) {
     if(data.length) {
-      this.getImgHtml(data)
+      this.render(data)
       this.bindEvents()
-    } else if (data.length < 1) {
-      this.hide(this.nextBtnEl)
     }
-
-    this.hide(this.prevBtnEl)
 
     return this
   }
 
   setImgData (dataLength) {
     this.dataLength = dataLength
+
+    if(this.dataLength < 1) {
+      this.hide(this.nextBtnEl)
+    }
+
+    this.hide(this.prevBtnEl)
   }
 
-  getImgHtml(data) {
-    this.imgWrap.innerHTML = data.reduce((html, item) => {
+  render(data) {
+    this.rollingEl.innerHTML = data.reduce((html, item) => {
       if(item !==0) {
         html += `<li class="_idx${item.index}"><a href="#"><img id="bigImg" src="${item.viewURL}" alt="${item.imgDesc}" width="980" height="654"></a></li>`
       } else {
@@ -40,7 +42,7 @@ class ImgView extends View {
       }
 
       return html
-    }, '<ul style="left: -980px">')
+    }, '')
   }
 
   bindEvents() {
